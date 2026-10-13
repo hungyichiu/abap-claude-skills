@@ -51,9 +51,9 @@ git clone https://github.com/hungyichiu/abap-claude-skills.git
 cp -r abap-claude-skills/skills/abap-review ~/.claude/skills/
 ```
 
-在 claude.ai 使用的話，把資料夾壓成 zip，到 Customize > Skills 按「+」上傳。
+在 claude.ai 使用的話，把資料夾壓成 zip，在 Skills 管理頁按新增上傳。
 
-For claude.ai, zip the folder and upload it via the "+" button under Customize > Skills.
+For claude.ai, zip the folder and upload it from the Skills management page.
 
 ### 使用方式 Usage
 
