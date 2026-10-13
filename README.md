@@ -51,9 +51,9 @@ git clone https://github.com/hungyichiu/abap-claude-skills.git
 cp -r abap-claude-skills/skills/abap-review ~/.claude/skills/
 ```
 
-在 claude.ai 或 Claude Desktop 使用的話，把資料夾壓成 zip，從 Settings 的 Skills 上傳。
+在 claude.ai 使用的話，把資料夾壓成 zip，到 Customize > Skills 按「+」上傳。
 
-For claude.ai or Claude Desktop, zip the folder and upload it under Skills in Settings.
+For claude.ai, zip the folder and upload it via the "+" button under Customize > Skills.
 
 ### 使用方式 Usage
 
@@ -63,13 +63,13 @@ Paste your ABAP code and ask for a review. Mentioning whether you are on ECC or 
 
 ### 公司規範 Company conventions
 
-如果你有公司的命名規則或 coding standard，可以自己建一個 `references/company-context.md`，寫明規範放在哪裡。skill 偵測到這個檔案就會先讀，並優先套用公司規範。這個檔案已列在 `.gitignore`，不會被 commit。
+如果你有公司的命名規則或 coding standard，可以自己建一個 `references/company-context.md`，寫明規範放在哪裡。有這個檔案時，skill 會先讀它，並優先套用公司規範。這個檔案已列在 `.gitignore`，不會被 commit。
 
 If your company has naming rules or a coding standard, create your own `references/company-context.md` pointing to them. The skill reads it first when present and applies your conventions ahead of generic advice. The file is listed in `.gitignore` so it won't be committed.
 
 ### 相關 skill Related skills
 
-`SKILL.md` 裡提到的 `abap-verify`、`abap-pair`、`abap-mentor` 等是同一套工作流程的其他 skill，還沒公開。沒有它們，`abap-review` 也能獨立使用。
+`SKILL.md` 裡提到的 `abap-verify`、`abap-pair`、`abap-mentor` 等是同一套工作流程的其他 skill，還沒公開。沒有它們，`abap-review` 一樣能用。
 
 Other skills mentioned in `SKILL.md` (`abap-verify`, `abap-pair`, `abap-mentor`, …) belong to the same workflow and are not yet published. `abap-review` works on its own without them.
 
