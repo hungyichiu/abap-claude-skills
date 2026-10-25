@@ -1,8 +1,8 @@
 # ABAP Claude Skills
 
-給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`，之後會陸續加入其他 skill。
+給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`，之後會陸續加入其他 skill。
 
-Claude skills for SAP ABAP developers. Currently includes `abap-review`; more skills will be added over time.
+Claude skills for SAP ABAP developers. Currently includes `abap-review` and `abap-archaeology`; more skills will be added over time.
 
 ---
 
@@ -72,6 +72,47 @@ If your company has naming rules or a coding standard, create your own `referenc
 `SKILL.md` 裡提到的 `abap-verify`、`abap-pair`、`abap-mentor` 等是同一套工作流程的其他 skill，還沒公開。沒有它們，`abap-review` 一樣能用。
 
 Other skills mentioned in `SKILL.md` (`abap-verify`, `abap-pair`, `abap-mentor`, …) belong to the same workflow and are not yet published. `abap-review` works on its own without them.
+
+## abap-archaeology
+
+接手一支沒有文件、原作者已離職的 ABAP 程式時，產出一份「程式身分證」：用途、輸入輸出、讀寫的表、呼叫的 BAPI / FM、處理流程、風險點，以及一份「還需要確認的清單」。
+
+For taking over an undocumented ABAP program whose author has left. It produces a structured "program ID card": purpose, inputs and outputs, tables read and written, BAPIs / function modules called, processing flow, risks, and a checklist of what still needs confirming.
+
+### 它的做法 How it works
+
+1. 確定性分級：每句話標明 ✅ 事實（程式碼讀得出來）、🔶 推測（附推論依據）、❓ 未知（要查系統或問人）。
+2. 第零關：先比對程式「宣稱做什麼」和「實際做什麼」，意圖不符通常是最重要的發現。
+3. 身分證分三層：先看這裡（給要報告的人）、程式行為（給要動程式的人）、查找與待辦。
+4. 特別留意「安靜地錯」的寫法：`BINARY SEARCH` 前沒 SORT、`sy-subrc` 沒檢查、1:N 表只讀到第一筆、`SHKZG` 沒處理。
+
+<!-- -->
+
+1. Certainty grading: every statement is marked ✅ fact (readable from the code), 🔶 inference (with its basis) or ❓ unknown (needs a system lookup or a person).
+2. Step zero: compare what the program claims to do with what it actually does. An intent mismatch is often the most important finding.
+3. The ID card has three layers: read this first (for reporting), program behavior (for whoever changes it), and lookup and to-do.
+4. Extra attention to silent failures: `BINARY SEARCH` without SORT, unchecked `sy-subrc`, reading only the first row of a 1:N table, ignoring `SHKZG`.
+
+它只負責「看懂」，不改你的程式，也不貼修正後的 ABAP。
+
+It is for understanding only; it does not change your code or paste corrected ABAP.
+
+### 安裝與使用 Installation and usage
+
+```bash
+git clone https://github.com/hungyichiu/abap-claude-skills.git
+cp -r abap-claude-skills/skills/abap-archaeology ~/.claude/skills/
+```
+
+貼上程式碼（或給 SE38 / ADT 匯出的檔案），說「幫我分析這支程式」或 "what does this ABAP program do"。先告訴它系統是 ECC 還是 S/4HANA，判讀會更準。
+
+Paste the code (or an export from SE38 / ADT) and ask what the program does. Mentioning whether you are on ECC or S/4HANA makes the reading more accurate.
+
+公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，它已列在 `.gitignore`。
+
+Company-specific context works the same way as in `abap-review`: create your own `references/company-context.md`, which is listed in `.gitignore`.
+
+---
 
 ---
 
