@@ -108,6 +108,12 @@ cp -r abap-claude-skills/skills/abap-archaeology ~/.claude/skills/
 
 Paste the code (or an export from SE38 / ADT) and ask what the program does. Mentioning whether you are on ECC or S/4HANA makes the reading more accurate.
 
+### 範例 Example
+
+[`examples/abap-archaeology/`](examples/abap-archaeology/) 有一支虛構的舊程式 `ZSDR0017.abap`，和用這個 skill 產出的[程式身分證](examples/abap-archaeology/ZSDR0017_程式身分證.md)。程式與資料全為虛構，不是任何公司的程式碼。
+
+[`examples/abap-archaeology/`](examples/abap-archaeology/) contains a fictional legacy report, `ZSDR0017.abap`, and the [program ID card](examples/abap-archaeology/ZSDR0017_程式身分證.md) this skill produced for it. The program and data are entirely made up and do not come from any company's code.
+
 公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，它已列在 `.gitignore`。
 
 Company-specific context works the same way as in `abap-review`: create your own `references/company-context.md`, which is listed in `.gitignore`.
