@@ -1,8 +1,8 @@
 # ABAP Claude Skills
 
-給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`，之後會陸續加入其他 skill。
+給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`，之後會陸續加入其他 skill。
 
-Claude skills for SAP ABAP developers. Currently includes `abap-review` and `abap-archaeology`; more skills will be added over time.
+Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology` and `abap-spec-writer`; more skills will be added over time.
 
 ---
 
@@ -119,6 +119,49 @@ Paste the code (or an export from SE38 / ADT) and ask what the program does. Men
 Company-specific context works the same way as in `abap-review`: create your own `references/company-context.md`, which is listed in `.gitignore`.
 
 ---
+
+## abap-spec-writer
+
+把已開發或接手的 ABAP 程式整理成一份給 PM、業務看的規格書。預設產出 md，要求時才另外產出 docx。
+
+Turns an ABAP program you built or inherited into a specification that PMs and business users can read. Markdown by default; a .docx only when asked.
+
+### 它的做法 How it works
+
+1. 規格書只寫「這支程式做什麼、為什麼這樣設計」。除錯過程、語法修正、逐日修改歷程不寫進來，那是風險清單和程式身分證的工作。
+2. 從程式碼讀不出來的（需求背景、需求方、某條規則是業務要求還是開發者自己決定的），動筆前一次問完。沒人知道的寫「待確認」，不自己編。
+3. 每條核心規則配輸入／輸出範例和邊界條件（剛好等於門檻、空值、重複執行），讀的人能照著驗證。
+4. 給不懂 ABAP 的人讀：技術詞第一次出現就接一句白話，「提升效率」這類空話後面一定要接具體內容。
+5. 交付前照 9 條清單自檢，包括「行為描述和目前的程式碼一致」「沒有把推測寫成事實」。
+
+<!-- -->
+
+1. The spec covers what the program does and why it was designed that way. Debugging history, syntax fixes and day-by-day change logs stay out; they belong in a risk list or program ID card.
+2. Anything the code can't tell you (business background, requester, whether a rule came from the business or the developer) is asked once, up front. Nobody knows? It's marked "to be confirmed", never made up.
+3. Every core rule comes with input/output examples and edge cases (exactly at the threshold, empty values, re-runs), so readers can verify it.
+4. Written for people who don't read ABAP: technical terms are explained in plain words on first use, and vague claims like "improves efficiency" must be backed by specifics.
+5. A 9-point self-check before delivery, including "behavior matches the current code" and "no inference written as fact".
+
+它只整理文件，不改你的程式。
+
+It writes documentation only; it does not change your code.
+
+### 安裝與使用 Installation and usage
+
+```bash
+git clone https://github.com/hungyichiu/abap-claude-skills.git
+cp -r abap-claude-skills/skills/abap-spec-writer ~/.claude/skills/
+```
+
+貼上程式碼，或給它程式碼和程式身分證，說「幫我寫規格書」或 "write a spec for this ABAP program"。要 Word 檔就說「另外產一份 docx」，需要先 `npm install docx`。
+
+Paste the code, or the code plus a program ID card, and ask for a spec. For a Word file, ask for a .docx as well; this needs `npm install docx`.
+
+### 範例 Example
+
+[`examples/abap-spec-writer/`](examples/abap-spec-writer/) 是用同一支示範程式 `ZSDR0017` 寫出的[規格書](examples/abap-spec-writer/ZSDR0017_規格書.md)，材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證。接手時先用 `abap-archaeology` 看懂，再用這個 skill 把現況寫成規格書給需求方確認。
+
+[`examples/abap-spec-writer/`](examples/abap-spec-writer/) contains a [spec](examples/abap-spec-writer/ZSDR0017_規格書.md) for the same sample program, `ZSDR0017`, written from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/). When you inherit a program, use `abap-archaeology` to understand it, then this skill to write up its current behavior for the requester to confirm.
 
 ---
 
