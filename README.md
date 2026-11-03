@@ -159,9 +159,9 @@ Paste the code, or the code plus a program ID card, and ask for a spec. For a Wo
 
 ### 範例 Example
 
-[`examples/abap-spec-writer/`](examples/abap-spec-writer/) 是用同一支示範程式 `ZSDR0017` 寫出的[規格書](examples/abap-spec-writer/ZSDR0017_規格書.md)（另附 [PDF 版](examples/abap-spec-writer/ZSDR0017_規格書.pdf)，看匯出後的分頁效果），材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證。接手時先用 `abap-archaeology` 看懂，再用這個 skill 把現況寫成規格書給需求方確認。
+[`examples/abap-spec-writer/`](examples/abap-spec-writer/) 是用同一支示範程式 `ZSDR0017` 寫出的[規格書](examples/abap-spec-writer/ZSDR0017_規格書.md)（另附 [PDF 版](examples/abap-spec-writer/ZSDR0017_規格書.pdf)，看匯出後的分頁效果；英文翻譯見 [md](examples/abap-spec-writer/ZSDR0017_spec_en.md)、[PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)），材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證。接手時先用 `abap-archaeology` 看懂，再用這個 skill 把現況寫成規格書給需求方確認。
 
-[`examples/abap-spec-writer/`](examples/abap-spec-writer/) contains a [spec](examples/abap-spec-writer/ZSDR0017_規格書.md) (plus a [PDF](examples/abap-spec-writer/ZSDR0017_規格書.pdf) showing the exported page layout) for the same sample program, `ZSDR0017`, written from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/). When you inherit a program, use `abap-archaeology` to understand it, then this skill to write up its current behavior for the requester to confirm.
+[`examples/abap-spec-writer/`](examples/abap-spec-writer/) contains a [spec](examples/abap-spec-writer/ZSDR0017_規格書.md) in Traditional Chinese (plus a [PDF](examples/abap-spec-writer/ZSDR0017_規格書.pdf) showing the exported page layout; English translation: [md](examples/abap-spec-writer/ZSDR0017_spec_en.md), [PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)) for the same sample program, `ZSDR0017`, written from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/). When you inherit a program, use `abap-archaeology` to understand it, then this skill to write up its current behavior for the requester to confirm.
 
 ---
 
