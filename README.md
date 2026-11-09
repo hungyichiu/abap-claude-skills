@@ -1,8 +1,8 @@
 # ABAP Claude Skills
 
-給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`，之後會陸續加入其他 skill。
+給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`、`abap-verify`，之後會陸續加入其他 skill。
 
-Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology` and `abap-spec-writer`; more skills will be added over time.
+Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology`, `abap-spec-writer` and `abap-verify`; more skills will be added over time.
 
 ---
 
@@ -69,9 +69,9 @@ If your company has naming rules or a coding standard, create your own `referenc
 
 ### 相關 skill Related skills
 
-`SKILL.md` 裡提到的 `abap-verify`、`abap-pair`、`abap-mentor` 等是同一套工作流程的其他 skill，還沒公開。沒有它們，`abap-review` 一樣能用。
+`SKILL.md` 裡提到的 `abap-pair`、`abap-mentor` 等是同一套工作流程的其他 skill，還沒公開。沒有它們，`abap-review` 一樣能用。
 
-Other skills mentioned in `SKILL.md` (`abap-verify`, `abap-pair`, `abap-mentor`, …) belong to the same workflow and are not yet published. `abap-review` works on its own without them.
+Other skills mentioned in `SKILL.md` (`abap-pair`, `abap-mentor`, …) belong to the same workflow and are not yet published. `abap-review` works on its own without them.
 
 ## abap-archaeology
 
@@ -162,6 +162,61 @@ Paste the code, or the code plus a program ID card, and ask for a spec. For a Wo
 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) 是用同一支示範程式 `ZSDR0017` 寫出的[規格書](examples/abap-spec-writer/ZSDR0017_規格書.md)（另附 [PDF 版](examples/abap-spec-writer/ZSDR0017_規格書.pdf)，看匯出後的分頁效果；英文翻譯見 [md](examples/abap-spec-writer/ZSDR0017_spec_en.md)、[PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)），材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證。接手時先用 `abap-archaeology` 看懂，再用這個 skill 把現況寫成規格書給需求方確認。
 
 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) contains a [spec](examples/abap-spec-writer/ZSDR0017_規格書.md) in Traditional Chinese (plus a [PDF](examples/abap-spec-writer/ZSDR0017_規格書.pdf) showing the exported page layout; English translation: [md](examples/abap-spec-writer/ZSDR0017_spec_en.md), [PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)) for the same sample program, `ZSDR0017`, written from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/). When you inherit a program, use `abap-archaeology` to understand it, then this skill to write up its current behavior for the requester to confirm.
+
+---
+
+## abap-verify
+
+為一支 ABAP 程式設計完整的測試案例表，特別是「開發完但沒驗證過」、接手來的程式。產出的表可以照著做、可以交給主管、測完就是測試紀錄。
+
+Designs a full set of test cases for an ABAP program, especially one that was built but never verified, or one you inherited. The result is something you can follow step by step, hand to your manager, and keep as the test record once it's done.
+
+### 它的做法 How it works
+
+1. 八個面向逐一檢查：正常流程、邊界值、異常、空資料、大量資料、權限、重複執行、跨期間跨組織。不適用的要寫「不適用，因為……」，不默默跳過。
+2. 先做，不先問：驗證範圍、環境、通過標準用最保守的假設直接產出，三個問題放進文件的「請主管確認」區。
+3. 讀程式碼找到的高風險疑點放最前面，每一條對應到哪個案例會把它測出來。
+4. 寫入類案例一律記前值、執行、記後值、逐欄比對、`SM13` 查 update，沒該變的欄位被改到也算 bug。
+5. 不假裝知道業務規則：預期結果取決於沒人說清楚的規則時，寫「需確認：……」，不編一個看起來合理的答案。
+6. 案例分高中低優先級；案例多時拆成設計表、追蹤表和逐案例的執行 Checklist。
+
+<!-- -->
+
+1. Eight angles, checked one by one: happy path, edge cases, errors, empty data, volume, authorization, re-runs, and cross-period / cross-org. Angles that don't apply say "not applicable, because…" instead of being skipped silently.
+2. Do first, ask later: scope, environment and pass criteria start from the most conservative assumptions, and the three open questions go into a "for your manager to confirm" section.
+3. High-risk findings from reading the code come first, each mapped to the test case that will expose it.
+4. Every write test follows the same order: record before values, run, record after values, compare field by field, check `SM13`. A field that changed but shouldn't have is a bug too.
+5. No pretending to know business rules: when the expected result depends on a rule nobody has spelled out, it says "to be confirmed: …" instead of inventing a plausible answer.
+6. Cases are ranked high / medium / low. With many cases, they are split into a design table, a tracking table and a step-by-step checklist per case.
+
+它只設計測試，不改你的程式，也不替你執行。
+
+It designs tests only; it does not change your code or run anything for you.
+
+`SKILL.md` 裡提到的 `sap-transport-env-inventory`、`abap-ask-coach`、`obsidian-note-format` 還沒公開，沒有它們一樣能用。
+
+`sap-transport-env-inventory`, `abap-ask-coach` and `obsidian-note-format`, mentioned in `SKILL.md`, are not yet published; `abap-verify` works without them.
+
+### 安裝與使用 Installation and usage
+
+```bash
+git clone https://github.com/hungyichiu/abap-claude-skills.git
+cp -r abap-claude-skills/skills/abap-verify ~/.claude/skills/
+```
+
+貼上程式碼，最好連同程式身分證，說「幫我設計測試案例」或 "how should I test this ABAP program"。先告訴它系統是 ECC 還是 S/4HANA。
+
+Paste the code, ideally with its program ID card, and ask for test cases. Mention whether you are on ECC or S/4HANA.
+
+### 範例 Example
+
+[`examples/abap-verify/`](examples/abap-verify/) 是同一支示範程式 `ZSDR0017` 的[測試案例表](examples/abap-verify/ZSDR0017_QAS測試案例表.md)：23 個案例、5 個高風險疑點，依執行順序拆成三本執行記錄。材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證，以及 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) 的規格書。skill 在 Obsidian 裡產出的連結是 `[[wikilink]]`，範例為了在 GitHub 上點得開，改成一般的 md 連結。
+
+[`examples/abap-verify/`](examples/abap-verify/) contains the [test case table](examples/abap-verify/ZSDR0017_QAS測試案例表.md) (in Traditional Chinese) for the same sample program, `ZSDR0017`: 23 cases and 5 high-risk findings, split into three execution logs by run order. It was built from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/) and the spec in [`examples/abap-spec-writer/`](examples/abap-spec-writer/). The skill writes Obsidian `[[wikilinks]]`; the example uses standard Markdown links so they work on GitHub.
+
+公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，寫明公司的測試環境和 client 用途，「驗證環境」就會照它填。這個檔案已列在 `.gitignore`。
+
+Company-specific context works the same way as in `abap-review`: create your own `references/company-context.md` describing your test systems and clients, and the skill fills in the test environment from it. The file is listed in `.gitignore`.
 
 ---
 
