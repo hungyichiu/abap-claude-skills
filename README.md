@@ -1,8 +1,8 @@
 # ABAP Claude Skills
 
-給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`、`abap-verify`，之後會陸續加入其他 skill。
+給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`、`abap-verify`、`sap-anomaly-investigation`，之後會陸續加入其他 skill。
 
-Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology`, `abap-spec-writer` and `abap-verify`; more skills will be added over time.
+Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology`, `abap-spec-writer`, `abap-verify` and `sap-anomaly-investigation`; more skills will be added over time.
 
 ---
 
@@ -217,6 +217,57 @@ Paste the code, ideally with its program ID card, and ask for test cases. Mentio
 公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，寫明公司的測試環境和 client 用途，「驗證環境」就會照它填。這個檔案已列在 `.gitignore`。
 
 Company-specific context works the same way as in `abap-review`: create your own `references/company-context.md` describing your test systems and clients, and the skill fills in the test environment from it. The file is listed in `.gitignore`.
+
+---
+
+## sap-anomaly-investigation
+
+程式上線後出事時的排查與修復流程：使用者回報資料不一致、程式疑似改錯資料、程式 dump 或逾時跑不出資料，要查出原因、修正程式或正式區資料的案子。
+
+An investigation and repair process for when something goes wrong after go-live: users report inconsistent data, a program seems to have written wrong data, or a program dumps or times out. It covers finding the cause and fixing the program or the production data.
+
+### 它的做法 How it works
+
+1. 4 個階段 12 步：釐清事實、找出原因、對策、修復收尾。dump（`ST22`）另有分支，骨架相同、證據來源不同。
+2. 推論和證據分開寫：程式碼判讀、憑記憶的表和欄位名稱標 🔶；只有 SQL、log、版本紀錄、dump、實測結果才算證據。
+3. 證據來自系統紀錄，不來自人的記憶：先查變更紀錄、job log、版本紀錄；查無紀錄也不等於沒發生，要先確認那張表有沒有寫變更紀錄。
+4. 找對照組：同一張單據、同一次執行的正常件並排比對所有欄位，縮小到「產生那個欄位的步驟」。
+5. 假設被推翻兩次就回到第一階段補事實，不提第三個假設。
+6. 修復有順序：修前先匯出清單、修正方式在測試區驗證、程式先上線，最後才修正式區資料，否則修好的資料會被舊程式改回去。
+
+<!-- -->
+
+1. 4 phases, 12 steps: establish the facts, find the cause, decide the fix, repair and close. Dumps (`ST22`) have their own branch with the same skeleton and different evidence.
+2. Inference and evidence are written separately: readings of the code and table or field names from memory are marked 🔶. Only SQL results, logs, version history, dumps and test results count as evidence.
+3. Evidence comes from system records, not people's memory: check change documents, job logs and version history first. "No record found" doesn't mean nothing happened; first check whether that table writes change documents at all.
+4. Find a reference case: put a normal record from the same document or the same run next to the broken one and compare every field, narrowing it down to the step that produced the odd field.
+5. If two hypotheses have been ruled out, go back to phase one and fill in the facts instead of proposing a third.
+6. Repair in order: export the list before changing anything, verify the fix in the test system, deploy the program first, and only then fix production data. Otherwise the old program will undo your fix.
+
+它只在正式區查詢，不寫入；沒有變更需求（CR）不改程式。
+
+It only queries production and never writes to it; it doesn't change programs without a change request.
+
+`SKILL.md` 裡提到的 `abap-debug-coach`、`hana-sql-dbacockpit`、`sap-transport-env-inventory`、`work-chat-reply`、`conversation-closeout` 還沒公開，沒有它們一樣能用。
+
+`abap-debug-coach`, `hana-sql-dbacockpit`, `sap-transport-env-inventory`, `work-chat-reply` and `conversation-closeout`, mentioned in `SKILL.md`, are not yet published; `sap-anomaly-investigation` works without them.
+
+### 安裝與使用 Installation and usage
+
+```bash
+git clone https://github.com/hungyichiu/abap-claude-skills.git
+cp -r abap-claude-skills/skills/sap-anomaly-investigation ~/.claude/skills/
+```
+
+描述你看到的異常（哪些單據、什麼欄位不對、從什麼時候開始），說「幫我排查」或 "help me investigate this data issue"。dump 的話貼上 `ST22` 的內容。
+
+Describe what you're seeing (which documents, which fields are wrong, since when) and ask for an investigation. For a dump, paste the `ST22` content.
+
+### 公司實例 Company cases
+
+skill 會在需要時讀 `references/company-cases.md`（若存在）：公司的 client、自建程式的已知行為、過去案件的實例。自己建這個檔案就能套用；它已列在 `.gitignore`。
+
+The skill reads `references/company-cases.md` when present: your clients, known behavior of in-house programs, and past cases. Create your own to use it; the file is listed in `.gitignore`.
 
 ---
 
