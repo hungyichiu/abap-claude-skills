@@ -263,6 +263,12 @@ cp -r abap-claude-skills/skills/sap-anomaly-investigation ~/.claude/skills/
 
 Describe what you're seeing (which documents, which fields are wrong, since when) and ask for an investigation. For a dump, paste the `ST22` content.
 
+### 範例 Example
+
+[`examples/sap-anomaly-investigation/`](examples/sap-anomaly-investigation/) 是同一支示範程式 `ZSDR0017` 上線後出事的[排查紀錄](examples/sap-anomaly-investigation/ZSDR0017_排查紀錄.md)：一張美金大單沒被交貨凍結就出貨了。兩個假設被證據推翻後，用對照組找到真正的原因（門檻沒管幣別），再圈出影響範圍、提出修正和驗證案例、排好修復順序，附用過的 SQL。案件、單號、數字都是虛構的。
+
+[`examples/sap-anomaly-investigation/`](examples/sap-anomaly-investigation/) contains an [investigation record](examples/sap-anomaly-investigation/ZSDR0017_排查紀錄.md) (in Traditional Chinese) for the same sample program, `ZSDR0017`, after go-live: a large USD order shipped without being blocked. After two hypotheses are ruled out by evidence, a side-by-side comparison with a blocked order finds the real cause (the threshold ignores currency). The record then scopes the impact, proposes a fix with test cases, and sets the repair order, with all the SQL used. The case, document numbers and figures are fictional.
+
 ### 公司實例 Company cases
 
 skill 會在需要時讀 `references/company-cases.md`（若存在）：公司的 client、自建程式的已知行為、過去案件的實例。自己建這個檔案就能套用；它已列在 `.gitignore`。
