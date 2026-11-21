@@ -1,8 +1,35 @@
 # ABAP Claude Skills
 
-給 SAP ABAP 開發者用的 Claude skills。目前收錄 `abap-review`、`abap-archaeology`、`abap-spec-writer`、`abap-verify`、`sap-anomaly-investigation`，之後會陸續加入其他 skill。
+接手沒有文件的 ABAP 程式、上線前要 review、要補規格書和測試案例、正式區出事要查原因時，讓 Claude 照 SAP 開發實務一步步做事的 5 支 Claude skills。
 
-Claude skills for SAP ABAP developers. Currently includes `abap-review`, `abap-archaeology`, `abap-spec-writer`, `abap-verify` and `sap-anomaly-investigation`; more skills will be added over time.
+Five Claude skills that make Claude follow real SAP development practice when you inherit an undocumented ABAP program, review code before go-live, write a spec or test cases, or investigate a production issue.
+
+| Skill | 什麼時候用 When to use | 產出 Output | 範例 Example |
+|---|---|---|---|
+| [abap-review](#abap-review) | 寫完或改完程式、上線前 / Before go-live | 三級問題清單 / Findings in three levels | — |
+| [abap-archaeology](#abap-archaeology) | 接手沒文件的舊程式 / Inheriting undocumented code | 程式身分證 / Program ID card | [中文](examples/abap-archaeology/ZSDR0017_程式身分證.md)、[English](examples/abap-archaeology/ZSDR0017_program_id_card_en.md) |
+| [abap-spec-writer](#abap-spec-writer) | 要給 PM、業務看的規格書 / Spec for PMs and business users | 規格書 md／docx / Spec in md or docx | [中文](examples/abap-spec-writer/ZSDR0017_規格書.md)、[English](examples/abap-spec-writer/ZSDR0017_spec_en.md) |
+| [abap-verify](#abap-verify) | 開發完還沒驗證 / Built but never tested | 測試案例表 / Test case table | [中文](examples/abap-verify/ZSDR0017_QAS測試案例表.md) |
+| [sap-anomaly-investigation](#sap-anomaly-investigation) | 資料不對、dump、逾時 / Wrong data, dumps, timeouts | 排查紀錄 / Investigation record | [中文](examples/sap-anomaly-investigation/ZSDR0017_排查紀錄.md) |
+
+接手一支程式的建議順序：`abap-archaeology` 看懂 → `abap-spec-writer` 寫成規格書 → `abap-verify` 設計測試 → `abap-review` 列修正清單。上線後出事再用 `sap-anomaly-investigation`。所有範例都用同一支虛構的示範程式 `ZSDR0017`。
+
+Suggested order when you inherit a program: `abap-archaeology` to understand it, `abap-spec-writer` to document it, `abap-verify` to test it, `abap-review` for a fix list. Use `sap-anomaly-investigation` when something goes wrong after go-live. All examples use the same fictional sample program, `ZSDR0017`.
+
+### 安裝 Installation
+
+Claude Code：把要用的資料夾複製到 skills 目錄。
+
+Claude Code: copy the folders you want into your skills directory.
+
+```bash
+git clone https://github.com/hungyichiu/abap-claude-skills.git
+cp -r abap-claude-skills/skills/abap-review ~/.claude/skills/
+```
+
+claude.ai：把單一 skill 資料夾（例如 `skills/abap-review`）壓成 zip，在 **Customize › Skills** 按 **+** › **Create skill** › **Upload a skill** 上傳，再把它打開。
+
+claude.ai: zip a single skill folder (for example `skills/abap-review`), then in **Customize › Skills** click **+** › **Create skill** › **Upload a skill**, upload it, and toggle it on.
 
 ---
 
@@ -50,10 +77,6 @@ Copy the `skills/abap-review` folder into your Claude Code skills directory:
 git clone https://github.com/hungyichiu/abap-claude-skills.git
 cp -r abap-claude-skills/skills/abap-review ~/.claude/skills/
 ```
-
-在 claude.ai 使用的話，把資料夾壓成 zip，在 Skills 管理頁按新增上傳。
-
-For claude.ai, zip the folder and upload it from the Skills management page.
 
 ### 使用方式 Usage
 
@@ -112,7 +135,23 @@ Paste the code (or an export from SE38 / ADT) and ask what the program does. Men
 
 [`examples/abap-archaeology/`](examples/abap-archaeology/) 有一支示範用的舊程式 `ZSDR0017.abap`，和用這個 skill 產出的[程式身分證](examples/abap-archaeology/ZSDR0017_程式身分證.md)。這支程式是依 legacy ABAP 常見的問題寫成的示範，不是任何公司的程式碼。
 
-[`examples/abap-archaeology/`](examples/abap-archaeology/) contains a sample legacy report, `ZSDR0017.abap`, and the [program ID card](examples/abap-archaeology/ZSDR0017_程式身分證.md) this skill produced for it. It was written to show problems commonly found in legacy ABAP and does not come from any company's code.
+[`examples/abap-archaeology/`](examples/abap-archaeology/) contains a sample legacy report, `ZSDR0017.abap`, and the [program ID card](examples/abap-archaeology/ZSDR0017_程式身分證.md) this skill produced for it. It was written to show problems commonly found in legacy ABAP and does not come from any company's code. An [English translation](examples/abap-archaeology/ZSDR0017_program_id_card_en.md) of the ID card is included.
+
+產出節錄 Output excerpt：
+
+```markdown
+### One-line summary
+🔶 Lists order items for ZOR/ZOR2 orders in sales organization TW01. When p_x is checked,
+it sets delivery block Z1 on every order whose total net value exceeds 500,000.
+
+**Claimed vs actual**
+- The header says "open orders, showing only items not yet delivered", but there is no
+  status filter at all: delivered and completed orders are listed too.
+
+**Highest risks**
+- This "report" changes production data: checking p_x calls a BAPI that changes the order header.
+- The BAPI's RETURN is never checked before COMMIT, so failed orders are still marked as blocked.
+```
 
 公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，它已列在 `.gitignore`。
 
@@ -162,6 +201,20 @@ Paste the code, or the code plus a program ID card, and ask for a spec. For a Wo
 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) 是用同一支示範程式 `ZSDR0017` 寫出的[規格書](examples/abap-spec-writer/ZSDR0017_規格書.md)（另附 [PDF 版](examples/abap-spec-writer/ZSDR0017_規格書.pdf)，看匯出後的分頁效果；英文翻譯見 [md](examples/abap-spec-writer/ZSDR0017_spec_en.md)、[PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)），材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證。接手時先用 `abap-archaeology` 看懂，再用這個 skill 把現況寫成規格書給需求方確認。
 
 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) contains a [spec](examples/abap-spec-writer/ZSDR0017_規格書.md) in Traditional Chinese (plus a [PDF](examples/abap-spec-writer/ZSDR0017_規格書.pdf) showing the exported page layout; English translation: [md](examples/abap-spec-writer/ZSDR0017_spec_en.md), [PDF](examples/abap-spec-writer/ZSDR0017_spec_en.pdf)) for the same sample program, `ZSDR0017`, written from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/). When you inherit a program, use `abap-archaeology` to understand it, then this skill to write up its current behavior for the requester to confirm.
+
+產出節錄 Output excerpt：
+
+```markdown
+## 2. Background and Purpose
+
+**The two things the program does today:**
+1. It lists every item of standard orders in the Taiwan sales organization.
+2. When the user ticks "Apply block", any order worth more than 500,000 in total
+   automatically gets a delivery block, so it cannot ship until someone releases it manually.
+
+**The problem the program was originally meant to solve (to be confirmed):**
+- The header says "Open Orders Report", but the current code has no filter on shipping status.
+```
 
 ---
 
@@ -213,6 +266,16 @@ Paste the code, ideally with its program ID card, and ask for test cases. Mentio
 [`examples/abap-verify/`](examples/abap-verify/) 是同一支示範程式 `ZSDR0017` 的[測試案例表](examples/abap-verify/ZSDR0017_QAS測試案例表.md)：23 個案例、5 個高風險疑點，依執行順序拆成三本執行記錄。材料是 [`examples/abap-archaeology/`](examples/abap-archaeology/) 的程式碼和程式身分證，以及 [`examples/abap-spec-writer/`](examples/abap-spec-writer/) 的規格書。skill 在 Obsidian 裡產出的連結是 `[[wikilink]]`，範例為了在 GitHub 上點得開，改成一般的 md 連結。
 
 [`examples/abap-verify/`](examples/abap-verify/) contains the [test case table](examples/abap-verify/ZSDR0017_QAS測試案例表.md) (in Traditional Chinese) for the same sample program, `ZSDR0017`: 23 cases and 5 high-risk findings, split into three execution logs by run order. It was built from the code and program ID card in [`examples/abap-archaeology/`](examples/abap-archaeology/) and the spec in [`examples/abap-spec-writer/`](examples/abap-spec-writer/). The skill writes Obsidian `[[wikilinks]]`; the example uses standard Markdown links so they work on GitHub.
+
+產出節錄 Output excerpt（高風險疑點表 / high-risk findings table）：
+
+```markdown
+| # | 疑點（行號） | 為什麼可疑 | 會怎麼錯 | 對應案例 |
+|---|---|---|---|---|
+| 1 | BAPI 沒看 RETURN 就 COMMIT（76–86） | 失敗也照樣標 flag | 報表說已凍結，訂單其實沒凍結 | T17 |
+| 2 | 沒有 AUTHORITY-CHECK | 能跑程式就能改訂單 | 不該凍結的人凍結了訂單 | T21 |
+| 5 | 50 萬門檻沒管幣別（73） | NETWR 是訂單幣別 | 外幣大單不凍結，日圓小單被凍結 | T16 |
+```
 
 公司專屬資訊的做法同 `abap-review`：自己建 `references/company-context.md`，寫明公司的測試環境和 client 用途，「驗證環境」就會照它填。這個檔案已列在 `.gitignore`。
 
@@ -269,6 +332,22 @@ Describe what you're seeing (which documents, which fields are wrong, since when
 
 [`examples/sap-anomaly-investigation/`](examples/sap-anomaly-investigation/) contains an [investigation record](examples/sap-anomaly-investigation/ZSDR0017_排查紀錄.md) (in Traditional Chinese) for the same sample program, `ZSDR0017`, after go-live: a large USD order shipped without being blocked. After two hypotheses are ruled out by evidence, a side-by-side comparison with a blocked order finds the real cause (the threshold ignores currency). The record then scopes the impact, proposes a fix with test cases, and sets the repair order, with all the SQL used. The case, document numbers and figures are fictional.
 
+產出節錄 Output excerpt：
+
+```markdown
+### 一句話
+`ZSDR0017` 用訂單幣別的金額直接跟 500,000 比，美金、歐元訂單永遠到不了門檻，
+所以從 2016 年加上自動凍結起，非台幣的大單一張都沒被凍結過。
+
+| 項目 | 內容 |
+|---|---|
+| 原因 | ✅ 已確定：門檻沒管幣別 |
+| 影響範圍 | ✅ 37 張，已出貨 35 張、未出貨 2 張 |
+| 正式區資料 | 還沒動，清單已匯出留底 |
+```
+
+(One line: `ZSDR0017` compares the order-currency amount directly with 500,000, so USD and EUR orders never reach the threshold; no non-TWD large order has been blocked since 2016.)
+
 ### 公司實例 Company cases
 
 skill 會在需要時讀 `references/company-cases.md`（若存在）：公司的 client、自建程式的已知行為、過去案件的實例。自己建這個檔案就能套用；它已列在 `.gitignore`。
@@ -276,6 +355,46 @@ skill 會在需要時讀 `references/company-cases.md`（若存在）：公司�
 The skill reads `references/company-cases.md` when present: your clients, known behavior of in-house programs, and past cases. Create your own to use it; the file is listed in `.gitignore`.
 
 ---
+
+## 常見問題 FAQ
+
+**Claude skill 是什麼？要付費方案嗎？ / What is a Claude skill? Do I need a paid plan?**
+
+Skill 是一個資料夾，裡面的 `SKILL.md` 告訴 Claude 遇到某類工作時照什麼流程做。Claude Code 和 claude.ai 都能用；各方案能不能上傳 skill，以 Anthropic 官方說明為準。
+
+A skill is a folder whose `SKILL.md` tells Claude which process to follow for a type of task. It works in Claude Code and claude.ai; check Anthropic's documentation for which plans support uploading skills.
+
+**ECC 和 S/4HANA 都能用嗎？ / Does it work for ECC and S/4HANA?**
+
+都能用。先告訴 Claude 你的系統是 ECC 還是 S/4HANA，語法和地雷判斷會更準。
+
+Yes. Tell Claude whether you are on ECC or S/4HANA first; syntax checks and pitfall detection get more accurate.
+
+**它會改我的程式或寫入正式區嗎？ / Will it change my code or write to production?**
+
+不會。`abap-review` 只提建議，`abap-archaeology` 只負責看懂，`abap-spec-writer` 只寫文件，`abap-verify` 只設計測試，`sap-anomaly-investigation` 在正式區只查詢、不寫入，沒有 CR 不改程式。
+
+No. `abap-review` only suggests, `abap-archaeology` only explains, `abap-spec-writer` only documents, `abap-verify` only designs tests, and `sap-anomaly-investigation` only queries production and never changes programs without a change request.
+
+**程式碼會傳到哪裡？ / Where does my code go?**
+
+skill 本身不連外、不上傳任何東西。你貼給 Claude 的程式碼照你使用的 Claude 方案和公司政策處理，貼公司程式前請先確認公司規定。
+
+The skills themselves make no network calls and upload nothing. Code you paste into Claude is handled under your Claude plan and your company's policy; check your company's rules before pasting company code.
+
+**公司的命名規則、client 怎麼套進去？ / How do I add company conventions?**
+
+在 skill 資料夾裡自己建 `references/company-context.md`（`sap-anomaly-investigation` 另有 `references/company-cases.md`），skill 會先讀它。這兩個檔案已列在 `.gitignore`，不會被 commit。
+
+Create your own `references/company-context.md` in the skill folder (`sap-anomaly-investigation` also reads `references/company-cases.md`). Both are listed in `.gitignore` and won't be committed.
+
+---
+
+## 作者 Author
+
+[@hungyichiu](https://github.com/hungyichiu)，SAP ABAP 開發者。最後更新：2026-11。
+
+[@hungyichiu](https://github.com/hungyichiu), SAP ABAP developer. Last updated: 2026-11.
 
 ## License
 
